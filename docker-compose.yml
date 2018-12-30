@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  prometheus:
+    image: prom/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    volumes:
+      - ./prometheus/:/etc/prometheus/
+    ports:
+      - 9090:9090
+  
+  pushgateway:
+    image: prom/pushgateway
+    ports:
+      - 9091:9091
+
+  simulator:
+    build: ./simulator
+    environment: 
+      - SIMULATOR_JOB_NAME=processor
+      - SIMULATOR_PUSHGATEWAY_URL=http://pushgateway:9091/
